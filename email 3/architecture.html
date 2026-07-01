@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Volunteer Confirmation Flow — Architecture</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f7fafc;
+      color: #2d3748;
+      padding: 32px 24px 48px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    h1 { font-size: 24px; margin-bottom: 4px; }
+    .subtitle { color: #718096; font-size: 14px; margin-bottom: 24px; }
+    .legend {
+      display: flex; flex-wrap: wrap; gap: 16px;
+      font-size: 13px; margin-bottom: 20px;
+    }
+    .legend span { display: flex; align-items: center; gap: 6px; }
+    .swatch {
+      width: 14px; height: 14px; border-radius: 3px; display: inline-block;
+    }
+    svg { width: 100%; height: auto; background: white; border-radius: 12px;
+      border: 1px solid #e2e8f0; box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
+    .notes {
+      margin-top: 24px; display: grid; gap: 12px;
+      grid-template-columns: 1fr 1fr;
+    }
+    @media (max-width: 700px) { .notes { grid-template-columns: 1fr; } }
+    .note {
+      background: white; border: 1px solid #e2e8f0; border-radius: 8px;
+      padding: 16px; font-size: 14px; line-height: 1.5;
+    }
+    .note h3 { font-size: 14px; margin-bottom: 6px; color: #4a5568; }
+    .note strong { color: #2d3748; }
+    .cost { background: #ebf8ff; border-color: #bee3f8; }
+  </style>
+</head>
+<body>
+  <h1>Volunteer Confirmation Flow</h1>
+  <p class="subtitle">Riverbend Food Alliance — architecture sketch for Priya &amp; Diane</p>
+
+  <div class="legend">
+    <span><i class="swatch" style="background:#667eea"></i> Uses tools we already pay for</span>
+    <span><i class="swatch" style="background:#ed8936;border:2px dashed #c05621"></i> Needs Diane approval (~$15/mo)</span>
+    <span><i class="swatch" style="background:#38b2ac"></i> Optional — not on critical path</span>
+  </div>
+
+  <svg viewBox="0 0 980 780" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+        <path d="M0,0 L7,3 L0,6 Z" fill="#718096"/>
+      </marker>
+      <marker id="arrow-blue" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+        <path d="M0,0 L7,3 L0,6 Z" fill="#667eea"/>
+      </marker>
+      <marker id="arrow-teal" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
+        <path d="M0,0 L7,3 L0,6 Z" fill="#38b2ac"/>
+      </marker>
+    </defs>
+
+    <!-- Section labels -->
+    <text x="40" y="28" font-size="11" font-weight="600" fill="#a0aec0" letter-spacing="1">1 · SIGNUP</text>
+    <text x="40" y="168" font-size="11" font-weight="600" fill="#a0aec0" letter-spacing="1">2 · REMINDERS</text>
+    <text x="40" y="368" font-size="11" font-weight="600" fill="#a0aec0" letter-spacing="1">3 · MONDAY CHECK</text>
+    <text x="40" y="384" font-size="10" fill="#a0aec0">auto weekly summary → Priya knows it worked</text>
+    <text x="40" y="508" font-size="11" font-weight="600" fill="#a0aec0" letter-spacing="1">4 · OPTIONAL (LATER)</text>
+
+    <!-- ===== ROW 1: Signup ===== -->
+    <rect x="40" y="44" width="110" height="48" rx="8" fill="#edf2f7" stroke="#cbd5e0"/>
+    <text x="95" y="64" text-anchor="middle" font-size="12" font-weight="600">Volunteer</text>
+    <text x="95" y="80" text-anchor="middle" font-size="10" fill="#718096">browser + phone</text>
+
+    <rect x="225" y="38" width="140" height="60" rx="8" fill="#667eea" stroke="#5a67d8"/>
+    <text x="295" y="58" text-anchor="middle" font-size="12" font-weight="600" fill="white">Signup page</text>
+    <text x="295" y="74" text-anchor="middle" font-size="10" fill="#e9d8fd">index.html · Google Sites</text>
+    <text x="295" y="88" text-anchor="middle" font-size="10" fill="#e9d8fd">replaces Google Form</text>
+
+    <rect x="400" y="32" width="200" height="80" rx="8" fill="#667eea" stroke="#5a67d8"/>
+    <text x="500" y="54" text-anchor="middle" font-size="13" font-weight="600" fill="white">Airtable</text>
+    <text x="500" y="70" text-anchor="middle" font-size="10" fill="#e9d8fd">source of truth</text>
+    <text x="500" y="84" text-anchor="middle" font-size="10" fill="#e9d8fd">Volunteer roster · shift slots · signups</text>
+    <text x="500" y="98" text-anchor="middle" font-size="10" fill="#e9d8fd">Name / Phone / Routes</text>
+
+    <rect x="655" y="38" width="285" height="60" rx="8" fill="#667eea" stroke="#5a67d8"/>
+    <text x="797" y="58" text-anchor="middle" font-size="12" font-weight="600" fill="white">Dashboard</text>
+    <text x="797" y="74" text-anchor="middle" font-size="10" fill="#e9d8fd">Airtable Interface or Looker Studio</text>
+    <text x="797" y="88" text-anchor="middle" font-size="10" fill="#e9d8fd">weekly signups-by-shift · open spots · Diane view</text>
+
+    <!-- ===== ROW 2: Reminders ===== -->
+    <rect x="400" y="155" width="200" height="56" rx="8" fill="#667eea" stroke="#5a67d8"/>
+    <text x="500" y="177" text-anchor="middle" font-size="12" font-weight="600" fill="white">Google Apps Script</text>
+    <text x="500" y="193" text-anchor="middle" font-size="10" fill="#e9d8fd">scheduled trigger · reads Airtable</text>
+
+    <rect x="400" y="255" width="200" height="56" rx="8" fill="#fffaf0" stroke="#ed8936" stroke-dasharray="6,4"/>
+    <text x="500" y="277" text-anchor="middle" font-size="12" font-weight="600" fill="#c05621">Twilio SMS</text>
+    <text x="500" y="293" text-anchor="middle" font-size="10" fill="#dd6b20">~$15/mo · needs Diane approval</text>
+
+    <rect x="40" y="224" width="110" height="48" rx="8" fill="#edf2f7" stroke="#cbd5e0"/>
+    <text x="95" y="244" text-anchor="middle" font-size="12" font-weight="600">Volunteer</text>
+    <text x="95" y="260" text-anchor="middle" font-size="10" fill="#718096">gets reminder text</text>
+
+    <!-- ===== ROW 3: Monday check ===== -->
+    <rect x="40" y="400" width="200" height="64" rx="8" fill="#667eea" stroke="#5a67d8"/>
+    <text x="140" y="422" text-anchor="middle" font-size="12" font-weight="600" fill="white">Google Apps Script</text>
+    <text x="140" y="438" text-anchor="middle" font-size="10" fill="#e9d8fd">Monday 8 AM · counts last week</text>
+    <text x="140" y="452" text-anchor="middle" font-size="10" fill="#e9d8fd">reminders sent · open shifts · errors</text>
+
+    <rect x="285" y="420" width="280" height="64" rx="8" fill="#667eea" stroke="#5a67d8"/>
+    <text x="425" y="442" text-anchor="middle" font-size="12" font-weight="600" fill="white">Slack → Priya</text>
+    <text x="425" y="458" text-anchor="middle" font-size="10" fill="#e9d8fd">"Week of 3/10: 12 reminders sent,</text>
+    <text x="425" y="472" text-anchor="middle" font-size="10" fill="#e9d8fd">3 open shifts, 0 errors — all good ✓"</text>
+
+    <!-- ===== ROW 4: Optional Claude + MCP ===== -->
+    <rect x="40" y="524" width="185" height="72" rx="8" fill="#e6fffa" stroke="#38b2ac"/>
+    <text x="132" y="548" text-anchor="middle" font-size="12" font-weight="600" fill="#234e52">Volunteer reply</text>
+    <text x="132" y="564" text-anchor="middle" font-size="10" fill="#285e61">"can't make it" · "bringing a friend?"</text>
+    <text x="132" y="580" text-anchor="middle" font-size="10" fill="#285e61">edge cases only</text>
+
+    <rect x="275" y="524" width="185" height="72" rx="8" fill="#e6fffa" stroke="#38b2ac"/>
+    <text x="367" y="548" text-anchor="middle" font-size="12" font-weight="600" fill="#234e52">Claude</text>
+    <text x="367" y="564" text-anchor="middle" font-size="10" fill="#285e61">drafts reply for Priya</text>
+    <text x="367" y="580" text-anchor="middle" font-size="10" fill="#285e61">not in core v1 flow</text>
+
+    <rect x="510" y="524" width="185" height="72" rx="8" fill="#e6fffa" stroke="#38b2ac" stroke-dasharray="5,4"/>
+    <text x="602" y="548" text-anchor="middle" font-size="12" font-weight="600" fill="#234e52">MCP connector</text>
+    <text x="602" y="564" text-anchor="middle" font-size="10" fill="#285e61">reads live Airtable data</text>
+    <text x="602" y="580" text-anchor="middle" font-size="10" fill="#718096">Anthropic tool-bridge · optional</text>
+
+    <!-- ===== Retire old path ===== -->
+    <rect x="40" y="640" width="880" height="68" rx="8" fill="#fff5f5" stroke="#fc8181"/>
+    <text x="480" y="664" text-anchor="middle" font-size="12" font-weight="600" fill="#c53030">Retire — replaced by above</text>
+    <text x="480" y="682" text-anchor="middle" font-size="11" fill="#e53e3e">Google Form → Sheet → manual Airtable entry → Priya hand-texts every volunteer</text>
+    <text x="480" y="698" text-anchor="middle" font-size="11" fill="#e53e3e">~6 hrs/week today · 30–40% no-show rate (anecdotal)</text>
+
+    <!-- Connectors (drawn last so boxes never cover arrows) -->
+    <g id="connectors">
+      <!-- Row 1 -->
+      <line x1="150" y1="68" x2="218" y2="68" stroke="#667eea" stroke-width="2" marker-end="url(#arrow-blue)"/>
+      <rect x="158" y="36" width="52" height="14" rx="3" fill="white"/>
+      <text x="184" y="46" text-anchor="middle" font-size="9" fill="#667eea">signs up</text>
+
+      <line x1="365" y1="68" x2="393" y2="68" stroke="#667eea" stroke-width="2" marker-end="url(#arrow-blue)"/>
+      <rect x="372" y="36" width="40" height="14" rx="3" fill="white"/>
+      <text x="392" y="46" text-anchor="middle" font-size="9" fill="#667eea">writes</text>
+
+      <line x1="600" y1="68" x2="648" y2="68" stroke="#667eea" stroke-width="2" marker-end="url(#arrow-blue)"/>
+      <rect x="605" y="36" width="48" height="14" rx="3" fill="white"/>
+      <text x="629" y="46" text-anchor="middle" font-size="9" fill="#667eea">powers</text>
+
+      <!-- Airtable → Apps Script -->
+      <line x1="500" y1="112" x2="500" y2="148" stroke="#667eea" stroke-width="2" marker-end="url(#arrow-blue)"/>
+      <rect x="508" y="118" width="130" height="28" rx="4" fill="white"/>
+      <text x="573" y="130" text-anchor="middle" font-size="9" fill="#667eea">queries tomorrow's</text>
+      <text x="573" y="142" text-anchor="middle" font-size="9" fill="#667eea">shifts (daily job)</text>
+
+      <!-- Apps Script → Twilio -->
+      <line x1="500" y1="211" x2="500" y2="248" stroke="#ed8936" stroke-width="2" stroke-dasharray="6,4" marker-end="url(#arrow)"/>
+      <rect x="508" y="218" width="88" height="14" rx="3" fill="white"/>
+      <text x="552" y="228" text-anchor="middle" font-size="9" fill="#c05621">sends SMS</text>
+
+      <!-- Twilio → Volunteer -->
+      <path d="M 400 283 L 200 283 L 200 248 L 155 248" fill="none" stroke="#718096" stroke-width="2" marker-end="url(#arrow)"/>
+      <rect x="210" y="268" width="110" height="14" rx="3" fill="white"/>
+      <text x="265" y="278" text-anchor="middle" font-size="9" fill="#718096">text day before shift</text>
+
+      <!-- Apps Script → Monday check -->
+      <path d="M 600 183 L 620 183 L 620 400 L 240 400" fill="none" stroke="#667eea" stroke-width="2" marker-end="url(#arrow-blue)"/>
+      <rect x="625" y="175" width="72" height="14" rx="3" fill="white"/>
+      <text x="661" y="185" text-anchor="middle" font-size="9" fill="#667eea">also runs weekly</text>
+
+      <!-- Monday Apps Script → Slack -->
+      <line x1="240" y1="452" x2="278" y2="452" stroke="#667eea" stroke-width="2" marker-end="url(#arrow-blue)"/>
+
+      <!-- Row 4 optional -->
+      <line x1="225" y1="560" x2="268" y2="560" stroke="#38b2ac" stroke-width="1.5" stroke-dasharray="5,4" marker-end="url(#arrow-teal)"/>
+      <line x1="460" y1="560" x2="503" y2="560" stroke="#38b2ac" stroke-width="1.5" stroke-dasharray="5,4" marker-end="url(#arrow-teal)"/>
+
+      <path d="M 695 524 L 695 490 L 880 490 L 880 112" fill="none" stroke="#38b2ac" stroke-width="1.5" stroke-dasharray="5,4" marker-end="url(#arrow-teal)"/>
+      <rect x="760" y="478" width="100" height="14" rx="3" fill="white"/>
+      <text x="810" y="488" text-anchor="middle" font-size="9" fill="#38b2ac">looks up roster</text>
+    </g>
+  </svg>
+
+  <div class="notes">
+    <div class="note">
+      <h3>How it works (v1)</h3>
+      Volunteer picks a shift on your page → signup lands in <strong>Airtable</strong> (one list, not Form + Sheet + Airtable). A <strong>Google Apps Script</strong> job runs daily, finds tomorrow's shifts, and sends reminder texts. Every <strong>Monday morning</strong>, Slack posts a one-line health check: reminders sent, open spots, errors.
+    </div>
+    <div class="note">
+      <h3>What is MCP?</h3>
+      <strong>Model Context Protocol</strong> — a standard way for Claude to connect to outside tools (like Airtable) so it can look up real data instead of guessing. Useful later if you want Claude to answer "who's on Saturday?" or draft cancel/reschedule replies. <strong>Not needed</strong> for signup or reminders to work.
+    </div>
+    <div class="note cost">
+      <h3>Cost (for Diane)</h3>
+      <strong>New spend:</strong> Twilio SMS ~$15/mo (phone number + ~200 texts). Everything else uses Google Workspace, Airtable, and Slack we already pay for. Apps Script and Google Sites are free.
+    </div>
+    <div class="note cost">
+      <h3>Time saved (for Diane)</h3>
+      Handbook says ~<strong>6 hrs/week</strong> on form + sheet + hand-texts. Automating reminders recovers ~<strong>4 hrs/week</strong> (~$500/mo in Priya's time at a conservative $30/hr). Payback on Twilio is &lt; one week.
+    </div>
+  </div>
+</body>
+</html>
